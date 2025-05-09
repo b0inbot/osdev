@@ -1,0 +1,17 @@
+# file: sys/x86_64/grub.cfg.in
+#
+# Grub config. We just autoboot to NOVA with our root pd binary passed
+# in as a multiboot2 module, and NOVA just accepts and calls
+# into it (with caveats).  Did you know you could configure grub to just boot
+# directly without any menu prompt?
+#
+
+GRUB_TERMINAL=console
+
+insmod fat
+insmod part_gpt
+insmod multiboot2
+echo 'Loading NOVA Microhypervisor ...'
+multiboot2 /boot/x86_64-nova
+module2 /boot/$ROOT $ROOT
+boot

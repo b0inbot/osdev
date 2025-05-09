@@ -1,3 +1,13 @@
+# file: BUILD
+#
+# Nothing big to explain other that the two http_archives at the bottom. We need
+# both the NOVA source code as well as a UEFI implementation that works in QEMU.
+#
+# Shockingly, http_archive can extract debian archives but they require additional
+# processing. Each http_archive has its own build file that can be looked at and queried.
+#
+#    bazel query @ovmf-edk2//...
+#
 module(
     name = "boin-os",
     version = "0.1.0",
@@ -5,6 +15,8 @@ module(
 
 bazel_dep(name = "rules_pkg", version = "1.1.0")
 bazel_dep(name = "platforms", version = "0.0.11")
+bazel_dep(name = "rules_shell", version = "0.4.1")
+bazel_dep(name = "rules_cc", version = "0.1.1")
 
 bazel_dep(
     name = "buildifier_prebuilt",
@@ -20,4 +32,11 @@ http_archive(
     integrity = "sha256-JJ0kBSrilLo7hfPNnlVNqYw9zybea3bTYofaano4ORU=",
     strip_prefix = "NOVA-release-25.08.0",
     url = "https://github.com/udosteinberg/NOVA/archive/refs/tags/release-25.08.0.zip",
+)
+
+http_archive(
+    name = "ovmf-edk2",
+    build_file = "@//sys/x86_64:ovmf.BUILD",
+    sha256 = "e73d3d1a8799f7f6fc16b73501d913edcdd86237556fbff30693e747e6dc262e",
+    url = "http://http.us.debian.org/debian/pool/main/e/edk2/ovmf_2022.11-6+deb12u2_all.deb",
 )
