@@ -15,6 +15,7 @@ cc_binary(
     srcs = ["main.cc"],
     visibility = ["//visibility:public"],
     deps = [
+        "//lib:headers",
         "//sys:rootpd",
     ],
 )

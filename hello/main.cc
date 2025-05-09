@@ -8,9 +8,9 @@
  * that the binary loaded and invoked a system call.
  */
 
+#include "lib/types.hh"
 #include "sys/syscalls.hh"
 
-extern "C" void _m2_main(unsigned long M2magic, unsigned char *M2,
-                       unsigned char *HIP) {
+extern "C" void _m2_main(uint64_t M2magic, ptr_t M2, ptr_t HIP) {
   sys_suspend_to_ram();
 }
