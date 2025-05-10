@@ -17,5 +17,6 @@ cc_binary(
     deps = [
         "//lib:headers",
         "//sys:rootpd",
+        "//sys/nova:hip",
     ],
 )

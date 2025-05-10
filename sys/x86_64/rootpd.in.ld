@@ -16,18 +16,14 @@ PHDRS {
 
 SECTIONS
 {
-  ENTRY(__start)
+  ENTRY(_start)
 
   . = 0x10000000 ;
   . = ALIGN(0x0);
-  .text . + 0 : AT (ADDR (.text) - 0x0)
+  .text . :
   {
-      __start = .;
-     *(.text .text.* .gnu.linkonce.t.*)
-      _mmain = .;
-     *(.rodata .rodata.*)
+    /* wow somehow just stripping this out made everything work... */
   } : text
-
   . = 0x10400000;
   .data :
   {

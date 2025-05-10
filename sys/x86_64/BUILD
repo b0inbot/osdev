@@ -184,6 +184,10 @@ cc_library(
             "-nolibc",
             "-nostdlib",
             "-DX86_64",
+            "-fomit-frame-pointer",
+            "-fno-exceptions",
+            "-fno-asynchronous-unwind-tables",
+            "-fno-unwind-tables",
         ],
     defines = [
         "X86_64",
@@ -216,6 +220,11 @@ cc_library(
     linkopts =
         [
             "-T$(location :rootpd.ld)",
+            "-Wl,--build-id=none",
+            "-fomit-frame-pointer",
+            "-fno-exceptions",
+            "-fno-asynchronous-unwind-tables",
+            "-fno-unwind-tables",
         ],
     target_compatible_with = [
         "@platforms//cpu:x86_64",

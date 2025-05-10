@@ -2,21 +2,21 @@
 # file: sys/x86_64/entry.S
 #
 # Simple assembly entrypoint that moves the NOVA and Multiboot2
-# details into the C-argument registers before calling _m2_main.
+# details into the C-argument registers before calling _main.
 #
-# Not necessarily required as you could jump straight into _m2_main
+# Not necessarily required as you could jump straight into _main
 # and read the registers directly.
 #
-.global __start
-__start:
+.global _start
+_start:
     // rip: pdroot ELF image entry point
     // rsp: hypervisor information page(HIP)
     // rdi: EAX at boot time (multiboot v2 magic)
     // rsi: EBS at book time (multiboot v2 data)
     mov %rsp, %rdx // put the HIP into arg3
-    // _m2_main(%rdi, %rsi, %rdx)
-    // _m2_main(multiboot_magic, multiboot_ptr, hip_ptr)
-    call _m2_main
+    # _main(%rdi, %rsi, %rdx)
+    # _main(multiboot_magic, multiboot_ptr, hip_ptr)
+    call _main
 
 # loop forever in case we get here
 _l:
@@ -31,7 +31,8 @@ _l:
 # so when we need it we just move it over. All the smarter
 # parameter building logic is written in C++ in the syscall package.
 #
-# We have a version of syscall (syscall2) that skips this step.
+# We have a version of syscall (syscall2) that skips this RCX to RAX step
+# in cases where the syscall is too simple to need a 3rd parameter.
 #
 .global _syscall
 _syscall:
@@ -51,3 +52,7 @@ _syscall2:
    mov %rdi, %rax // put status in rax
    leave
    ret
+
+
+.global data
+data:
