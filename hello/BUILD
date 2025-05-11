@@ -1,5 +1,3 @@
-load("@rules_cc//cc:cc_binary.bzl", "cc_binary")
-
 # file: hello/BUILD
 #
 # The build file for the hellobinary, which is the entrypoint into
@@ -10,13 +8,18 @@ load("@rules_cc//cc:cc_binary.bzl", "cc_binary")
 # the platform specific versions. I have no idea if this will be tenable
 # longterm.
 #
+
+load("@rules_cc//cc:cc_binary.bzl", "cc_binary")
+
 cc_binary(
     name = "hello",
     srcs = ["main.cc"],
     visibility = ["//visibility:public"],
     deps = [
+        "//drv:uart",
         "//lib:headers",
+        "//lib:math",
         "//sys:rootpd",
-        "//sys/nova:hip",
+        "//sys/nova:headers",
     ],
 )

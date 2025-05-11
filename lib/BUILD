@@ -14,3 +14,10 @@ cc_library(
         "types.hh",
     ],
 )
+
+cc_library(
+    name = "math",
+    hdrs = [
+        "math.hh",
+    ],
+)

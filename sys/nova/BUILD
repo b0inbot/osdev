@@ -8,8 +8,9 @@ load("@rules_cc//cc:cc_library.bzl", "cc_library")
 package(default_visibility = ["//visibility:public"])
 
 cc_library(
-    name = "hip",
+    name = "headers",
     hdrs = [
+        "ObjectSpace.hh",
         "hip.hh",
     ],
     deps = [
