@@ -28,7 +28,7 @@ int sys_create_pd(int sel, int parent, int type) {
   return _syscall2(rdi, rsi);
 }
 
-int sys_ctrl_pd(int src, int dst, int ssb, int dsd, unsigned int ord,
+int sys_ctrl_pd(uint64_t src, uint64_t dst, uint64_t ssb, uint64_t dsd, unsigned int ord,
                 unsigned int pmm, int mad) {
 
   int rdi = (src << 8) + 0x7;

@@ -130,7 +130,7 @@ public:
 
   // This is an improvement on the above control method, but the math
   // of ssb, dsd, and ord is not fun yet.
-  inline TakenRef take(int newTop, int ssb, int dsb, uint32_t ord, uint32_t pmm,
+  inline TakenRef take(uint64_t newTop, uint64_t ssb, uint64_t dsb, uint32_t ord, uint32_t pmm,
                        int mad) {
     auto srcPD = _ref.ident();
     auto id = _ref.parent()->ident();

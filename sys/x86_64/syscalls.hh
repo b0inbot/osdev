@@ -6,6 +6,8 @@
  */
 #pragma once
 
+#include "lib/types.hh"
+
 #define OP_PD 0x0
 #define OP_OS 0x1
 #define OP_HS 0x2
@@ -49,7 +51,7 @@
 
 int sys_create_pd(int sel, int pd, int type);
 int sys_create_pt(int sel, int pd, int ec, void *ip);
-int sys_ctrl_pd(int src, int dst, int ssb, int dsd, unsigned int ord,
+int sys_ctrl_pd(uint64_t src, uint64_t dst, uint64_t ssb, uint64_t dsd, unsigned int ord,
                 unsigned int pmm, int mad);
 int sys_create_ec(int sel, int pd, int hvp, int evt, unsigned short cpu,
                   void *sp, int flags);
