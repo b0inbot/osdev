@@ -13,6 +13,10 @@ load("@rules_cc//cc:cc_binary.bzl", "cc_binary")
 
 cc_binary(
     name = "hello",
+    # we can separate out as much code as we can but there still
+    # needs to be a _main entrypoint in srcs attached to
+    # cc_binary for the rootpd. I do not know why but without it
+    # the libentry assembly will not find the proper symbol
     srcs = ["main.cc"],
     visibility = ["//visibility:public"],
     deps = [
