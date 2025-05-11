@@ -51,7 +51,7 @@ extern "C" void _main(uint32_t m2sig, ptr_t m2data, nova::HIP *hip) {
   // All the magic numbers here are described in the NOVA specification
   // and are all relative to the values given to us in the HIP.
   //
-  auto top = pow(2, hip->sbw.obj);
+  auto top = ipow(2, hip->sbw.obj);
   nova::CurrentObjectSpace root{top - 2, top, top - 6};
   auto novaOS = nova::ObjectSpace{root.rel(-1)};
 
@@ -77,7 +77,7 @@ extern "C" void _main(uint32_t m2sig, ptr_t m2data, nova::HIP *hip) {
     uint8_t amount = 16;
     uint64_t dest = top - 32 * 2;
     long dsb = dest - amount;
-    long ord = 4; // log(amount, 2)
+    long ord = log2(amount);
     long ssb = top - amount;
     // just mark TAKE and GRANT as allowed which will allow our PIO objects to
     // be controled. The full range of capability objects we are copying over
@@ -106,7 +106,8 @@ extern "C" void _main(uint32_t m2sig, ptr_t m2data, nova::HIP *hip) {
     // dsb and ssb must be the same if we are working on the PIO space we
     // cant do any sort of offsets or mapping.
     //
-    long ord = 3;
+    int amount = 8;
+    long ord = log2(amount);
     long dsb = 512 + 256 + 128 + 64 + 32 + 16 + 8;
     int pmm = 0b1; // PIOs only use 1 bit (allow or not allow I/O)
     int ret = rootPIO.control(novaPIO.ident(), dsb, dsb, ord, pmm, IGNORED(0));
@@ -139,7 +140,7 @@ extern "C" void _main(uint32_t m2sig, ptr_t m2data, nova::HIP *hip) {
     if (ret != 0) {
       COM1.putstr("MAIN: OK: Checking expected PIO perms\n");
     } else {
-      COM1.putstr("MAIN: FAIL: Checking expected PIO perms\T");
+      COM1.putstr("MAIN: FAIL: Checking expected PIO perms\n");
     }
   }
 

@@ -40,3 +40,11 @@ http_archive(
     sha256 = "e73d3d1a8799f7f6fc16b73501d913edcdd86237556fbff30693e747e6dc262e",
     url = "http://http.us.debian.org/debian/pool/main/e/edk2/ovmf_2022.11-6+deb12u2_all.deb",
 )
+
+http_archive(
+    name = "dietlibc-x86_64",
+    build_file = "@//sys/x86_64:dietlibc.BUILD",
+    integrity = "sha256-WqVZkDmuWLuntKFWb8RTSFzRoVWiCzE+Fc0b0OGcC+s=",
+    strip_prefix = "dietlibc-0.35",
+    url = "https://www.fefe.de/dietlibc/dietlibc-0.35.tar.xz",
+)

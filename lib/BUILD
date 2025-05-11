@@ -20,4 +20,7 @@ cc_library(
     hdrs = [
         "math.hh",
     ],
+    deps = [
+        "@dietlibc-x86_64//:libm",
+    ],
 )
