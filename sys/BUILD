@@ -15,6 +15,9 @@ cc_library(
     hdrs = [
         "syscalls.hh",
     ],
+    deps = select({
+        "@platforms//cpu:x86_64": ["//sys/x86_64:syscalls"],
+    }),
 )
 
 #

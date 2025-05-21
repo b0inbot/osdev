@@ -159,9 +159,8 @@ cc_library(
     ],
     visibility = ["//visibility:public"],
     deps = [
-	"//lib:headers",
         ":entry",
-        ":nothing",
+        "//lib:headers",
     ],
 )
 
@@ -179,7 +178,7 @@ cc_library(
     name = "nothing",
     copts =
         [
-            "-std=c++17",
+            "-std=c++20",
             "-fno-builtin",
             "-nostartfiles",
             "-nolibc",
@@ -204,9 +203,6 @@ cc_library(
         "@platforms//cpu:x86_64",
     ],
     visibility = ["//visibility:public"],
-    deps = [
-        "//sys:syscalls",
-    ],
 )
 
 cc_library(

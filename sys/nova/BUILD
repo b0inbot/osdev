@@ -17,3 +17,19 @@ cc_library(
         "//lib:headers",
     ],
 )
+
+cc_library(
+    name = "hypercalls",
+    srcs = [
+        "Hypercalls.cc",
+    ],
+    hdrs = [
+        "Hypercalls.hh",
+    ],
+    deps = [
+        "//lib:headers",
+        "//lib:math",
+        "//sys:nothing",
+        "//sys:syscalls",
+    ],
+)

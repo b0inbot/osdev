@@ -15,7 +15,7 @@ chmod +w $CODE $VARS
 
 qemu-system-x86_64 \
   -m 1024 \
-  -smp 2 \
+  -smp 4 \
   -serial mon:stdio \
   -cpu host,vmx \
   -nographic \

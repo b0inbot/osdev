@@ -54,6 +54,8 @@ public:
   inline Ref rel(int64_t offset, uint8_t multiplier = 1) {
     return Ref{_id + (offset * multiplier), _parent};
   }
+
+  inline void invalidate() { _valid = false; }
 };
 
 /*
@@ -114,7 +116,14 @@ public:
   TakenRef(Ref ref, int srcPD, int id, int ssb, int dsb, int ord)
       : _ref(ref), _srcPD(srcPD), _id(id), _ssb(ssb), _dsb(dsb), _ord(ord) {}
 
-  inline void untake() { sys_ctrl_pd(_srcPD, _id, _ssb, _dsb, _ord, 0, 0); }
+  inline void untake() {
+    if (_ref.valid()) {
+      auto res = sys_ctrl_pd(_srcPD, _id, _ssb, _dsb, _ord, 0, 0);
+      if (res == 0) {
+        _ref.invalidate();
+      }
+    }
+  }
 };
 
 /*
@@ -130,8 +139,8 @@ public:
 
   // This is an improvement on the above control method, but the math
   // of ssb, dsd, and ord is not fun yet.
-  inline TakenRef take(uint64_t newTop, uint64_t ssb, uint64_t dsb, uint32_t ord, uint32_t pmm,
-                       int mad) {
+  inline TakenRef take(uint64_t newTop, uint64_t ssb, uint64_t dsb,
+                       uint32_t ord, uint32_t pmm, int mad) {
     auto srcPD = _ref.ident();
     auto id = _ref.parent()->ident();
     auto status = sys_ctrl_pd(srcPD, id, ssb, dsb, ord, pmm, mad);

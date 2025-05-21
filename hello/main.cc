@@ -14,6 +14,7 @@
 #include "lib/math.hh"
 #include "lib/types.hh"
 
+#include "sys/nova/Hypercalls.hh"
 #include "sys/nova/ObjectSpace.hh"
 #include "sys/nova/hip.hh"
 
@@ -75,7 +76,7 @@ extern "C" void _main(uint32_t m2sig, ptr_t m2data, nova::HIP *hip) {
   nova::TakenRef novaObjs;
   {
     uint8_t amount = 16;
-    uint64_t dest = top - 32 * 2;
+    uint64_t dest = top - 32;
     long dsb = dest - amount;
     long ord = log2(amount);
     long ssb = top - amount;

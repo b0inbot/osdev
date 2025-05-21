@@ -49,11 +49,18 @@
 #define MEM_OBJ 0xA
 #define MEM_CAP 0xB
 
-int sys_create_pd(int sel, int pd, int type);
-int sys_create_pt(int sel, int pd, int ec, void *ip);
-int sys_ctrl_pd(uint64_t src, uint64_t dst, uint64_t ssb, uint64_t dsd, unsigned int ord,
-                unsigned int pmm, int mad);
-int sys_create_ec(int sel, int pd, int hvp, int evt, unsigned short cpu,
-                  void *sp, int flags);
+uint64_t sys_create_pd(uint64_t sel, uint64_t pd, uint64_t type);
+uint64_t sys_create_pt(uint64_t sel, uint64_t pd, uint64_t ec, ptr_t ip);
+uint64_t sys_create_ec(uint64_t sel, uint64_t pd, uint64_t hvp, uint64_t evt,
+                       uint16_t cpu, ptr_t sp, uint8_t flags);
+uint64_t sys_create_sc(uint64_t sel, uint64_t pd, uint64_t ec, uint64_t scd);
 
-void sys_suspend_to_ram();
+uint64_t sys_ctrl_pt(uint64_t pt, uint64_t pid, uint64_t mtd);
+
+uint64_t sys_ctrl_pd(uint64_t src, uint64_t dst, uint64_t ssb, uint64_t dsd,
+                     uint64_t ord, uint64_t pmm, uint64_t mad);
+uint64_t sys_ctrl_sc(uint64_t sc, uint64_t *ptr);
+
+uint64_t sys_ipc_call(uint64_t sel, uint64_t *mtd);
+
+[[noreturn]] void sys_suspend_to_ram();

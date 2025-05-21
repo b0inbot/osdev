@@ -25,5 +25,6 @@ cc_binary(
         "//lib:math",
         "//sys:rootpd",
         "//sys/nova:headers",
+        "//sys/nova:hypercalls",
     ],
 )
