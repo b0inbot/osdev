@@ -52,7 +52,7 @@ extern "C" void _main(uint32_t m2sig, ptr_t m2data, nova::HIP *hip) {
   // All the magic numbers here are described in the NOVA specification
   // and are all relative to the values given to us in the HIP.
   //
-  uint64_t top = ipow(2, hip->sbw.obj);
+  uint64_t top = pow(2, hip->sbw.obj);
   nova::CurrentObjectSpace root{top - 2, top, top - 6};
   auto novaOS = nova::ObjectSpace{root.rel(-1)};
 

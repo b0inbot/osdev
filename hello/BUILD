@@ -28,3 +28,18 @@ cc_binary(
         "//sys/nova:hypercalls",
     ],
 )
+
+# We just use empty to test the new cross compiler and its includes
+cc_binary(
+    name = "empty",
+    # we can separate out as much code as we can but there still
+    # needs to be a _main entrypoint in srcs attached to
+    # cc_binary for the rootpd. I do not know why but without it
+    # the libentry assembly will not find the proper symbol
+    srcs = ["empty.cc"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//lib:headers",
+        "//sys:rootpd",
+    ],
+)

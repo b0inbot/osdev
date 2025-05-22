@@ -48,3 +48,15 @@ http_archive(
     strip_prefix = "dietlibc-0.35",
     url = "https://www.fefe.de/dietlibc/dietlibc-0.35.tar.xz",
 )
+
+local_repository = use_repo_rule("@bazel_tools//tools/build_defs/repo:local.bzl", "new_local_repository")
+
+local_repository(
+    name = "cross-gcc-x86_64",
+    build_file = "@//build/x86_64:cross.BUILD",
+    path = "/opt/boin/osdev-cross",
+)
+
+register_toolchains(
+    "//toolchain:cc_nova_x86_64_cc_toolchain",
+)

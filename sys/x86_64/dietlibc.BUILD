@@ -7,17 +7,29 @@ load("@rules_cc//cc:cc_library.bzl", "cc_library")
 
 package(default_visibility = ["//visibility:public"])
 
+filegroup(
+    name = "headers",
+    srcs = [
+        "dietlibm.h",
+    ] + glob([
+        "include/sys/*.h",
+        "include/*.h",
+    ]),
+)
+
 cc_library(
     name = "common",
     hdrs = [
         "dietlibm.h",
-        "include/sys/cdefs.h",
-    ],
+    ] + glob([
+        "include/sys/*.h",
+        "include/*.h",
+    ]),
 )
 
 cc_library(
     name = "libm",
-    srcs = glob(["libm/*.c"]) + glob(["x86_64/math_*.S"]),
+    srcs = glob(["x86_64/math_*.S"]),
     hdrs = [
         "include/math.h",
     ],

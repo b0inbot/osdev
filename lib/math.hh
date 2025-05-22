@@ -4,6 +4,6 @@
 
 extern "C" {
 #undef __cplusplus
-#include "include/math.h"
+#include <math.h>
 #define __cplusplus
 }
