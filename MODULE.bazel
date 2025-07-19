@@ -58,5 +58,5 @@ local_repository(
 )
 
 register_toolchains(
-    "//toolchain:cc_nova_x86_64_cc_toolchain",
+    "//toolchains/boin-nova:cc_nova_x86_64_cc_toolchain",
 )
