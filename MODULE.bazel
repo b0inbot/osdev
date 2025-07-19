@@ -29,9 +29,9 @@ http_archive = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "ht
 http_archive(
     name = "nova-x86_64",
     build_file = "@//nova/x86_64:nova.BUILD",
-    integrity = "sha256-JJ0kBSrilLo7hfPNnlVNqYw9zybea3bTYofaano4ORU=",
-    strip_prefix = "NOVA-release-25.08.0",
-    url = "https://github.com/udosteinberg/NOVA/archive/refs/tags/release-25.08.0.zip",
+    integrity = "sha256-g2Knl4YwC+h0Zzvh9pxNgJ+eg8OBWJ6WEAUi0J2TH3c=",
+    strip_prefix = "NOVA-release-25.17.0",
+    url = "https://github.com/udosteinberg/NOVA/archive/refs/tags/release-25.17.0.zip",
 )
 
 http_archive(
