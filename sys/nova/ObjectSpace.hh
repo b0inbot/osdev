@@ -56,6 +56,34 @@ public:
   }
 
   inline void invalidate() { _valid = false; }
+
+  template <typename T> T cast() { return T{*this}; }
+};
+
+class PIO {
+public:
+  PIO(Ref ref) : _ref(ref) {}
+
+  inline uint64_t ident() { return _ref.ident(); }
+
+  inline int control(PIO &src, int dsb, uint32_t ord, bool allow) {
+    if (allow) {
+      return sys_ctrl_pd(src.ident(), ident(), dsb, dsb, ord, 1, IGNORED(0));
+    } else {
+      return sys_ctrl_pd(src.ident(), ident(), dsb, dsb, ord, 0, IGNORED(0));
+    }
+  }
+
+  inline int allow(PIO &src, int dsb, uint32_t ord) {
+    return control(src, dsb, ord, true);
+  }
+
+  inline int disallow(PIO &src, int dsb, uint32_t ord) {
+    return control(src, dsb, ord, false);
+  }
+
+protected:
+  Ref _ref;
 };
 
 /*
@@ -125,6 +153,16 @@ public:
     }
   }
 };
+
+namespace Caps {
+enum CObjectSpace {
+  GRANT = 0b01,
+  TAKE = 0b10,
+};
+enum CPIO {
+  ALLOW = 0b1,
+};
+} // namespace Caps
 
 /*
  * Object which points to an external object space that we are able to take from

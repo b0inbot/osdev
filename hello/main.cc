@@ -21,6 +21,10 @@
 #include "drv/uart.hh"
 #include "sys/syscalls.hh"
 
+namespace Caps {
+using namespace nova::Caps;
+}
+
 bool strequal(char *l, const char *r, uint32_t len) {
   for (uint32_t x = 0; x != len; x++) {
     if (*l++ != *r++)
@@ -54,7 +58,7 @@ extern "C" void _main(uint32_t m2sig, ptr_t m2data, nova::HIP *hip) {
   //
   uint64_t top = pow(2, hip->sbw.obj);
   nova::CurrentObjectSpace root{top - 2, top, top - 6};
-  auto novaOS = nova::ObjectSpace{root.rel(-1)};
+  auto novaOS = root.rel(-1).cast<nova::ObjectSpace>();
 
   // When the kernel receives a hypercall from us, the references to the
   // objects are all relative to the ObjectSpace attached to us. So if
@@ -80,18 +84,17 @@ extern "C" void _main(uint32_t m2sig, ptr_t m2data, nova::HIP *hip) {
     long dsb = dest - amount;
     long ord = log2(amount);
     long ssb = top - amount;
-    // just mark TAKE and GRANT as allowed which will allow our PIO objects to
-    // be controled. The full range of capability objects we are copying over
-    // are all of different types so I'm unsure how to tweak the bits properly.
-    uint8_t pmm = 0b00011;
+    // We are taking from one and granting to the other so this is a big
+    // hammer solution GRANT/TAKE the whole thing as one range
+    auto pmm = Caps::CObjectSpace::GRANT | Caps::CObjectSpace::TAKE;
     novaObjs = novaOS.take(dest, ssb, dsb, ord, pmm, IGNORED(0));
     if (!novaObjs.valid()) {
       return;
     }
   }
 
-  auto novaPIO = novaObjs.rel(-4);
-  auto rootPIO = novaObjs.rel(-8);
+  auto novaPIO = novaObjs.rel(-4).cast<nova::PIO>();
+  auto rootPIO = novaObjs.rel(-8).cast<nova::PIO>();
 
   // Our current process has NO permissions to do PIO but the novaPIO space
   // has permissions and we have permissions to take from novaPIO.
@@ -109,9 +112,8 @@ extern "C" void _main(uint32_t m2sig, ptr_t m2data, nova::HIP *hip) {
     //
     int amount = 8;
     long ord = log2(amount);
-    long dsb = 512 + 256 + 128 + 64 + 32 + 16 + 8;
-    int pmm = 0b1; // PIOs only use 1 bit (allow or not allow I/O)
-    int ret = rootPIO.control(novaPIO.ident(), dsb, dsb, ord, pmm, IGNORED(0));
+    long dsb = 512 + 256 + 128 + 64 + 32 + 16 + 8; // 0x3f8
+    int ret = rootPIO.allow(novaPIO, dsb, ord);
     if (ret != 0) {
       return;
     }
@@ -120,7 +122,7 @@ extern "C" void _main(uint32_t m2sig, ptr_t m2data, nova::HIP *hip) {
   // Now that we have permissions to access the UART we can undo our take from
   // before. We do this by runnign the same syscall but
   // marking the pmm bits as 0 which marks the destination objects as null
-  // capability.
+  // capability. our object abstraction does that for us with untake()
   //
   // We could always untake a smaller or bigger subset of what we copied before.
   novaObjs.untake();
@@ -134,10 +136,10 @@ extern "C" void _main(uint32_t m2sig, ptr_t m2data, nova::HIP *hip) {
 
   // Reconfirm taking from PIO fails
   {
-    long ord = 3;
+    int amount = 8;
+    long ord = log2(amount);
     long dsb = 512 + 256 + 128 + 64 + 32 + 16 + 8;
-    int pmm = 0b1; // PIOs only use 1 bit (allow or not allow I/O)
-    int ret = rootPIO.control(novaPIO.ident(), dsb, dsb, ord, pmm, IGNORED(0));
+    int ret = rootPIO.allow(novaPIO, dsb, ord);
     if (ret != 0) {
       COM1.putstr("MAIN: OK: Checking expected PIO perms\n");
     } else {
