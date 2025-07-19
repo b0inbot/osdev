@@ -21,6 +21,8 @@
 #include "drv/uart.hh"
 #include "sys/syscalls.hh"
 
+#include "vm/engine.hh"
+
 namespace Caps {
 using namespace nova::Caps;
 }
@@ -146,6 +148,27 @@ extern "C" void _main(uint32_t m2sig, ptr_t m2data, nova::HIP *hip) {
       COM1.putstr("MAIN: FAIL: Checking expected PIO perms\n");
     }
   }
+
+  // Check for UEFI
+  auto uefi = hip->uefi_mm_address;
+  if (uefi == 0xffffffffffffffff) {
+    COM1.putstr("MAIN: FAIL: No UEFI\n");
+  } else {
+    COM1.putstr("MAIN: OK: Found UEFI\n");
+  }
+
+  constexpr uint16_t codeSize = 1024;
+
+  vm::Engine engine;
+  uint8_t CODE_BUFFER[codeSize];
+
+  COM1.putstr("MAIN: Waiting for code\n");
+  for (uint16_t x = 0; x != codeSize; x++) {
+    CODE_BUFFER[x] = COM1.getch();
+    COM1.putstr("got\n");
+  }
+
+  engine.execute(CODE_BUFFER);
 
   sys_suspend_to_ram();
 }

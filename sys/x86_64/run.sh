@@ -5,6 +5,9 @@
 # mostly from upstream NOVA and Genode documentation.
 #
 
+if [ -z "$1" ]; then
+	exit 1
+fi
 CODE=$1
 VARS=$2
 ISO=$3
@@ -13,12 +16,12 @@ ISO=$3
 # in qemu.
 chmod +w $CODE $VARS
 
+
 qemu-system-x86_64 \
   -m 1024 \
   -smp 4 \
-  -serial mon:stdio \
+  -serial telnet:localhost:9991 \
   -cpu host,vmx \
-  -nographic \
   -M q35,accel=kvm,kernel-irqchip=split \
   -drive if=pflash,format=raw,readonly=on,file="$CODE" \
   -drive if=pflash,format=raw,file="$VARS" \

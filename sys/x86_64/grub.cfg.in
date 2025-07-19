@@ -8,6 +8,7 @@
 
 GRUB_TERMINAL=console
 
+insmod all_video
 insmod fat
 insmod part_gpt
 insmod multiboot2
