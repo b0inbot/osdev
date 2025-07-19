@@ -46,7 +46,7 @@ http_archive(
     build_file = "@//sys/x86_64:dietlibc.BUILD",
     integrity = "sha256-WqVZkDmuWLuntKFWb8RTSFzRoVWiCzE+Fc0b0OGcC+s=",
     strip_prefix = "dietlibc-0.35",
-    url = "https://www.fefe.de/dietlibc/dietlibc-0.35.tar.xz",
+    url = "http://www.fefe.de/dietlibc/dietlibc-0.35.tar.xz",
 )
 
 local_repository = use_repo_rule("@bazel_tools//tools/build_defs/repo:local.bzl", "new_local_repository")
