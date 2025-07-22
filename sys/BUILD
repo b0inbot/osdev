@@ -4,13 +4,13 @@
 # specific counterparts.
 #
 
-load("@rules_cc//cc:cc_library.bzl", "cc_library")
+load("//:defs.bzl", "nova_lib")
 
 package(
     default_visibility = ["//visibility:public"],
 )
 
-cc_library(
+nova_lib(
     name = "syscalls",
     hdrs = [
         "syscalls.hh",
@@ -39,5 +39,16 @@ alias(
     name = "rootpd",
     actual = select({
         "@platforms//cpu:x86_64": "//sys/x86_64:rootpd",
+    }),
+)
+
+#
+# 'boot.cc' is shared boot code in each rootpd. it's injected into the rootpd
+# build via the macro defined under //:defs.bzl
+#
+alias(
+    name = "boot.cc",
+    actual = select({
+        "@platforms//cpu:x86_64": "//sys/x86_64:boot.cc",
     }),
 )

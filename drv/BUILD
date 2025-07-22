@@ -2,20 +2,15 @@
 #
 # Drivers and such.
 #
-
-load("@rules_cc//cc:cc_library.bzl", "cc_library")
+load("//:defs.bzl", "nova_lib")
 
 package(default_visibility = ["//visibility:public"])
 
 # UART probably does not belong here but keeping it here for now.
-cc_library(
+nova_lib(
     name = "uart",
     srcs = ["uart.cc"],
     hdrs = [
         "uart.hh",
-    ],
-    deps = [
-        "//lib:headers",
-        "//sys:syscalls",
     ],
 )

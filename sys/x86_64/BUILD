@@ -41,6 +41,8 @@ load("@rules_pkg//pkg:mappings.bzl", "pkg_attributes", "pkg_files")
 load("@rules_pkg//pkg:tar.bzl", "pkg_tar")
 load("@rules_shell//shell:sh_binary.bzl", "sh_binary")
 
+exports_files(["boot.cc"])
+
 #
 # geniso is a simple script which takes in a tar file, extracts
 # it, and runs grub2-mkrescue to generate an ISO file that can be

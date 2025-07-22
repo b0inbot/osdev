@@ -20,7 +20,8 @@ uint64_t _syscall2(uint64_t a, uint64_t b);
 [[noreturn]] void sys_suspend_to_ram() {
   int rdi = 0x30c;
   _syscall2(rdi, 0);
-  for(;;) {}
+  for (;;) {
+  }
 }
 
 uint64_t sys_create_pd(uint64_t sel, uint64_t parent, uint64_t type) {

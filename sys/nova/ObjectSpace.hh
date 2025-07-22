@@ -12,6 +12,8 @@
 #include "lib/types.hh"
 #include "sys/syscalls.hh"
 
+#define IGNORED(x) (x)
+
 namespace nova {
 
 class CurrentObjectSpace;

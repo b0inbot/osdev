@@ -2,12 +2,11 @@
 #
 # Common/shared libraries and headers
 #
-
-load("@rules_cc//cc:cc_library.bzl", "cc_library")
+load("//:defs.bzl", "nova_lib", "shared_lib")
 
 package(default_visibility = ["//visibility:public"])
 
-cc_library(
+shared_lib(
     name = "headers",
     hdrs = [
         "debug.hh",
@@ -15,7 +14,7 @@ cc_library(
     ],
 )
 
-cc_library(
+nova_lib(
     name = "math",
     hdrs = [
         "math.hh",

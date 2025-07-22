@@ -3,11 +3,11 @@
 # Build rules for NOVA specific libraries and headers that are
 # custom written or imported in directly and modified.
 #
-load("@rules_cc//cc:cc_library.bzl", "cc_library")
+load("//:defs.bzl", "nova_lib")
 
 package(default_visibility = ["//visibility:public"])
 
-cc_library(
+nova_lib(
     name = "headers",
     hdrs = [
         "ObjectSpace.hh",
@@ -18,7 +18,7 @@ cc_library(
     ],
 )
 
-cc_library(
+nova_lib(
     name = "hypercalls",
     srcs = [
         "Hypercalls.cc",
