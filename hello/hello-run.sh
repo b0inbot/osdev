@@ -1,5 +1,5 @@
 #!/bin/sh
-# file: sys/x86_64/run.sh
+# file: hello/hello-run.sh
 #
 # The run script which runs the whole system together. The qemu invocation was borrowed
 # mostly from upstream NOVA and Genode documentation.
@@ -20,8 +20,9 @@ chmod +w $CODE $VARS
 qemu-system-x86_64 \
   -m 1024 \
   -smp 4 \
-  -serial telnet:localhost:9991 \
+  -serial mon:stdio \
   -cpu host,vmx \
+  -nographic \
   -M q35,accel=kvm,kernel-irqchip=split \
   -drive if=pflash,format=raw,readonly=on,file="$CODE" \
   -drive if=pflash,format=raw,file="$VARS" \

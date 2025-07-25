@@ -5,6 +5,9 @@ tweak various options project-wide.
 
 load("@rules_cc//cc:cc_binary.bzl", "cc_binary")
 load("@rules_cc//cc:cc_library.bzl", "cc_library")
+load("@rules_pkg//pkg:mappings.bzl", "pkg_attributes", "pkg_files")
+load("@rules_pkg//pkg:tar.bzl", "pkg_tar")
+load("@rules_shell//shell:sh_binary.bzl", "sh_binary")
 
 # the rootpd is the main userspace entrypoint. It
 # requires a _main which is in //sys:boot.cc and
@@ -34,6 +37,100 @@ def _nova_rootpd_impl(name, srcs, deps, **kwargs):
         deps = ddeps,
         srcs = ssrcs,
         **kwargs
+    )
+
+    # this is all x86_64 specific hooks but should be abstracted out
+    # if/when we ever get an aarch cross-compiler setup
+    # The pkg_  and sh_ rules are used to build and run the resulting ISO file that we
+    # system, respresented as an ISO cdrom.
+    #
+    # The layout of the filesystem we want to build looks like this, where
+    # grub.cfg is the required path and grub.cfg points to the other two files:
+    #
+    #  /boot/grub/grub.cfg
+    #  /boot/x86_64-nova
+    #  /boot/root
+    #
+    # There was no clear way to pass in a pkg_filegroup into geniso so
+    # the pipeline has a seemingly unnecessary pkg_tar step.
+    #
+    # pkg_files(nova) ---------\
+    # pkg_files(grub.cfg)----> pkg_tar --->  geniso ---> boot.iso
+    # pkg_files ---------------/
+    #
+    # A pkg_iso would be nice except that grub2-rescue does a lot more
+    # work than just building an ISO.
+    #
+
+    native.genrule(
+        name = name + "-grub-config",
+        srcs = ["//sys/x86_64:grub.cfg.in"],
+        outs = ["grub.cfg"],
+        cmd = "sed 's,$$ROOT," + name + ",g' < $< > $@",
+    )
+
+    pkg_files(
+        name = name + "-grub",
+        srcs = [
+            ":" + name + "-grub-config",
+        ],
+        attributes = pkg_attributes(
+            group = "root",
+            mode = "0551",
+            owner = "root",
+        ),
+        prefix = "boot/grub",
+    )
+    pkg_files(
+        name = name + "-nova",
+        srcs = [
+            ":" + name,
+            "@nova-x86_64//:kernel",
+        ],
+        attributes = pkg_attributes(
+            group = "root",
+            mode = "0551",
+            owner = "root",
+        ),
+        prefix = "boot",
+    )
+
+    pkg_tar(
+        name = name + "-nova-all",
+        srcs = [
+            ":" + name + "-grub",
+            ":" + name + "-nova",
+        ],
+        visibility = ["//visibility:public"],
+    )
+
+    native.genrule(
+        name = name + "-boot",
+        srcs = [
+            ":" + name + "-nova-all",
+        ],
+        outs = [name + "-boot.iso"],
+        cmd = "$(locations //sys/x86_64:geniso) $@ $(locations :" + name + "-nova-all)",
+        tools = ["//sys/x86_64:geniso"],
+        visibility = ["//visibility:public"],
+    )
+
+    sh_binary(
+        name = name + "-run",
+        srcs = [name + "-run.sh"],
+        args = [
+            "$(location @ovmf-edk2//:ovmf_code)",
+            "$(location @ovmf-edk2//:ovmf_vars)",
+            "$(location :" + name + "-boot)",
+        ],
+        data = [
+            ":" + name + "-boot",
+            # we need the OVMF files because we want to use UEFI within
+            # qemu. We dont need these in the ISO but they need to be
+            # passed into QEMU.
+            "@ovmf-edk2//:ovmf_code",
+            "@ovmf-edk2//:ovmf_vars",
+        ],
     )
 
 nova_rootpd = macro(

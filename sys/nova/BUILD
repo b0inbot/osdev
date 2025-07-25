@@ -29,7 +29,6 @@ nova_lib(
     deps = [
         "//lib",
         "//lib:math",
-        "//sys:nothing",
         "//sys:syscalls",
     ],
 )

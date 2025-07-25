@@ -12,6 +12,8 @@
 
 load("//:defs.bzl", "nova_rootpd")
 
+exports_files(["hello-run.sh"])
+
 nova_rootpd(
     name = "hello",
     srcs = ["main.cc"],
