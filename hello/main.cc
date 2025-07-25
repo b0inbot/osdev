@@ -10,18 +10,25 @@
 
 #define IGNORED(x) (x)
 
-#include "lib/debug.hh"
-#include "lib/math.hh"
 #include "lib/types.hh"
-
-#include "sys/nova/Hypercalls.hh"
-#include "sys/nova/ObjectSpace.hh"
 #include "sys/nova/hip.hh"
+#include "lib/IO.hh"
 
-#include "drv/uart.hh"
-#include "sys/syscalls.hh"
+void repl(IO* io) {
+  io->putstr("q -> quit\n");
+  io->putstr("> ");
+}
 
 void pmain(uint32_t m2sig, ptr_t m2data, nova::HIP *hip, void *data) {
-  Uart *COM1 = (Uart *)data;
-  COM1->putstr("MAIN: In pmain\n");
+  IO *io = (IO *)data;
+  io->setEcho(true);
+  char buffer[256];
+  while (1) {
+    repl(io);
+    io->readline(buffer);
+    if (buffer[0] == 'q') {
+      return;
+    }
+    io->putstr("? unknown\n");
+  }
 }

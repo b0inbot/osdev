@@ -162,7 +162,7 @@ cc_library(
     visibility = ["//visibility:public"],
     deps = [
         ":entry",
-        "//lib:headers",
+        "//lib",
     ],
 )
 

@@ -18,7 +18,7 @@ cc_library(
         "opcodes.hh",
     ],
     deps = [
-        "//lib:headers",
+        "//lib",
     ],
 )
 

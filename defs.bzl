@@ -13,7 +13,7 @@ load("@rules_cc//cc:cc_library.bzl", "cc_library")
 def _nova_rootpd_impl(name, srcs, deps, **kwargs):
     ddeps = (deps or []) + [
         "//drv:uart",
-        "//lib:headers",
+        "//lib",
         "//lib:math",
         "//sys:rootpd",
         "//sys/nova:headers",
@@ -47,7 +47,7 @@ nova_rootpd = macro(
 #
 def _nova_lib_impl(name, deps, **kwargs):
     ddeps = (deps or [
-        "//lib:headers",
+        "//lib",
         "//sys:syscalls",
     ])
     cc_library(

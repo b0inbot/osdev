@@ -22,6 +22,17 @@
 #include "drv/uart.hh"
 #include "sys/syscalls.hh"
 
+#include "lib/IO.hh"
+
+class UARTIO : public IO {
+public:
+  Uart *com;
+  UARTIO(Uart *_com) : com(_com) {}
+
+  char getch() { return com->getch(); }
+  void putch(char ch) { com->putch(ch); }
+};
+
 void pmain(uint32_t m2sig, ptr_t m2data, nova::HIP *hip, void *data);
 
 namespace Caps {
@@ -135,7 +146,8 @@ extern "C" void _main(uint32_t m2sig, ptr_t m2data, nova::HIP *hip) {
   if (!COM1.init()) {
     return;
   }
-  COM1.putstr("MAIN: UART Ready\n");
+  UARTIO io(&COM1);
+  io.putstr("MAIN: UART Ready\n");
 
   // Reconfirm taking from PIO fails
   {
@@ -144,22 +156,22 @@ extern "C" void _main(uint32_t m2sig, ptr_t m2data, nova::HIP *hip) {
     long dsb = 512 + 256 + 128 + 64 + 32 + 16 + 8;
     int ret = rootPIO.allow(novaPIO, dsb, ord);
     if (ret != 0) {
-      COM1.putstr("MAIN: OK: Checking expected PIO perms\n");
+      io.putstr("MAIN: OK: Checking expected PIO perms\n");
     } else {
-      COM1.putstr("MAIN: FAIL: Checking expected PIO perms\n");
+      io.putstr("MAIN: FAIL: Checking expected PIO perms\n");
     }
   }
 
   // Check for UEFI
   auto uefi = hip->uefi_mm_address;
   if (uefi == 0xffffffffffffffff) {
-    COM1.putstr("MAIN: FAIL: No UEFI\n");
+    io.putstr("MAIN: FAIL: No UEFI\n");
   } else {
-    COM1.putstr("MAIN: OK: Found UEFI\n");
+    io.putstr("MAIN: OK: Found UEFI\n");
   }
 
-  COM1.putstr("MAIN: Launching PMAIN\n");
-  pmain(m2sig, m2data, hip, &COM1);
-  COM1.putstr("MAIN: Done with PMAIN\n");
+  io.putstr("MAIN: Launching PMAIN\n");
+  pmain(m2sig, m2data, hip, &io);
+  io.putstr("MAIN: Done with PMAIN\n");
   sys_suspend_to_ram();
 }

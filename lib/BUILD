@@ -7,8 +7,12 @@ load("//:defs.bzl", "nova_lib", "shared_lib")
 package(default_visibility = ["//visibility:public"])
 
 shared_lib(
-    name = "headers",
+    name = "lib",
+    srcs = [
+        "IO.cc",
+    ],
     hdrs = [
+        "IO.hh",
         "debug.hh",
         "types.hh",
     ],

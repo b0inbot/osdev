@@ -14,7 +14,7 @@ nova_lib(
         "hip.hh",
     ],
     deps = [
-        "//lib:headers",
+        "//lib",
     ],
 )
 
@@ -27,7 +27,7 @@ nova_lib(
         "Hypercalls.hh",
     ],
     deps = [
-        "//lib:headers",
+        "//lib",
         "//lib:math",
         "//sys:nothing",
         "//sys:syscalls",
