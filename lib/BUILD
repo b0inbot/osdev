@@ -13,6 +13,7 @@ shared_lib(
     ],
     hdrs = [
         "IO.hh",
+        "System.hh",
         "debug.hh",
         "types.hh",
     ],

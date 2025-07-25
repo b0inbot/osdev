@@ -10,18 +10,21 @@
 
 #define IGNORED(x) (x)
 
+#include "lib/IO.hh"
+#include "lib/System.hh"
 #include "lib/types.hh"
 #include "sys/nova/hip.hh"
-#include "lib/IO.hh"
 
-void repl(IO* io) {
+void repl(IO *io) {
   io->putstr("q -> quit\n");
   io->putstr("> ");
 }
 
 void pmain(uint32_t m2sig, ptr_t m2data, nova::HIP *hip, void *data) {
-  IO *io = (IO *)data;
+  DebugSystem *system = (DebugSystem *)data;
+  IO *io = (IO *)system->telnet;
   io->setEcho(true);
+
   char buffer[256];
   while (1) {
     repl(io);

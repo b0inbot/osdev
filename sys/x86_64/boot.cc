@@ -11,6 +11,7 @@
 
 #define IGNORED(x) (x)
 
+#include "lib/System.hh"
 #include "lib/debug.hh"
 #include "lib/math.hh"
 #include "lib/types.hh"
@@ -133,6 +134,25 @@ extern "C" void _main(uint32_t m2sig, ptr_t m2data, nova::HIP *hip) {
     }
   }
 
+  // Initialize and use the UART.
+  Uart COM1(COM1_PORT);
+  if (!COM1.init()) {
+    return;
+  }
+  UARTIO io(&COM1);
+  io.putstr("MAIN: UART Ready\n");
+
+  {
+    int amount = 8;
+    long ord = log2(amount);
+    long dsb = 512 + 128 + 64 + 32 + 16 + 8; // 0x2f8
+    int ret = rootPIO.allow(novaPIO, dsb, ord);
+    if (ret != 0) {
+      io.putstr("MAIN: UART (2) fail\n");
+      return;
+    }
+  }
+
   // Now that we have permissions to access the UART we can undo our take from
   // before. We do this by runnign the same syscall but
   // marking the pmm bits as 0 which marks the destination objects as null
@@ -141,13 +161,13 @@ extern "C" void _main(uint32_t m2sig, ptr_t m2data, nova::HIP *hip) {
   // We could always untake a smaller or bigger subset of what we copied before.
   novaObjs.untake();
 
-  // Initialize and use the UART.
-  Uart COM1(COM1_PORT);
-  if (!COM1.init()) {
+  Uart COM2(COM2_PORT);
+  if (!COM2.init()) {
+    io.putstr("MAIN: UART (2) init fail\n");
     return;
   }
-  UARTIO io(&COM1);
-  io.putstr("MAIN: UART Ready\n");
+  UARTIO io2(&COM2);
+  io2.putstr("MAIN: UART (2) Ready\n");
 
   // Reconfirm taking from PIO fails
   {
@@ -170,8 +190,14 @@ extern "C" void _main(uint32_t m2sig, ptr_t m2data, nova::HIP *hip) {
     io.putstr("MAIN: OK: Found UEFI\n");
   }
 
+  // Build our wrapping system for injecting objects
+  DebugSystem system{
+      .stdio = &io,
+      .telnet = &io2,
+  };
+
   io.putstr("MAIN: Launching PMAIN\n");
-  pmain(m2sig, m2data, hip, &io);
+  pmain(m2sig, m2data, hip, &system);
   io.putstr("MAIN: Done with PMAIN\n");
   sys_suspend_to_ram();
 }

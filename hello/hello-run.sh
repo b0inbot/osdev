@@ -21,6 +21,7 @@ qemu-system-x86_64 \
   -m 1024 \
   -smp 4 \
   -serial mon:stdio \
+  -serial tcp:127.0.0.1:5000,server,nowait \
   -cpu host,vmx \
   -nographic \
   -M q35,accel=kvm,kernel-irqchip=split \
