@@ -43,12 +43,12 @@ toolchain(
     exec_compatible_with = [
         "@platforms//cpu:x86_64",
         #    "@platforms//os:linux",
-        #"//:nova-boin",
+        # "//:nova-boin",
     ],
     target_compatible_with = [
         "@platforms//cpu:x86_64",
         # TODO: This breaks genrules
-        #"//:nova-boin",
+        "//:nova-boin",
     ],
     toolchain = ":nova_x86_64_cc_toolchain",
     toolchain_type = "@bazel_tools//tools/cpp:toolchain_type",

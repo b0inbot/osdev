@@ -13,7 +13,7 @@ load("@rules_shell//shell:sh_binary.bzl", "sh_binary")
 # requires a _main which is in //sys:boot.cc and
 # rootpd expects a pmain function definition.
 #
-def _nova_rootpd_impl(name, srcs, deps, **kwargs):
+def _nova_rootpd_impl(name, srcs, deps, target_compatible_with, **kwargs):
     ddeps = (deps or []) + [
         "//drv:uart",
         "//lib",
@@ -21,6 +21,10 @@ def _nova_rootpd_impl(name, srcs, deps, **kwargs):
         "//sys:rootpd",
         "//sys/nova:headers",
         "//sys/nova:hypercalls",
+    ]
+    target_compatible_with = target_compatible_with or [
+        "@platforms//cpu:x86_64",
+        "//:nova-boin",
     ]
 
     # we can separate out as much code as we can but there still
@@ -36,6 +40,7 @@ def _nova_rootpd_impl(name, srcs, deps, **kwargs):
         name = name,
         deps = ddeps,
         srcs = ssrcs,
+        target_compatible_with = target_compatible_with,
         **kwargs
     )
 
@@ -130,6 +135,8 @@ def _nova_rootpd_impl(name, srcs, deps, **kwargs):
             # passed into QEMU.
             "@ovmf-edk2//:ovmf_code",
             "@ovmf-edk2//:ovmf_vars",
+        ],
+        target_compatible_with = [
         ],
     )
 

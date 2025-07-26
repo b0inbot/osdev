@@ -10,6 +10,8 @@
 # into a macro.
 #
 
+load("@bazel_skylib//rules:build_test.bzl", "build_test")
+load("@rules_cc//cc:cc_binary.bzl", "cc_binary")
 load("//:defs.bzl", "nova_rootpd")
 
 exports_files(["hello-run.sh"])
@@ -19,4 +21,26 @@ nova_rootpd(
     srcs = ["main.cc"],
     visibility = ["//visibility:public"],
     deps = [],
+)
+
+cc_binary(
+    name = "test",
+    srcs = ["test.cc"],
+    target_compatible_with = [
+        "@platforms//os:linux",
+    ],
+)
+
+build_test(
+    name = "ensure_build_nova",
+    targets = [
+        ":hello",
+    ],
+)
+
+build_test(
+    name = "ensure_build",
+    targets = [
+        ":test",
+    ],
 )
